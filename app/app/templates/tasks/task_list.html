@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Lista de Tareas</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body class="bg-light">
+    <div class="container py-5">
+        <div class="row justify-content-center">
+            <div class="col-lg-10">
+                <div class="card shadow">
+                    <div class="card-body">
+                        <h1 class="mb-4 text-center">Lista de todas las tareas</h1>
+                        <div class="mb-3 text-end">
+                            <a href="{% url 'tasks:task-create' %}" class="btn btn-success">Crear nueva tarea</a>
+                        </div>
+                        <table class="table table-striped table-hover">
+                            <thead class="table-dark">
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Contenido</th>
+                                    <th>Completada</th>
+                                    <th>Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for task in tasks %}
+                                    <tr>
+                                        <td>{{ task.id }}</td>
+                                        <td>{{ task.content }}</td>
+                                        <td>
+                                            {% if task.is_completed %}
+                                                <span class="badge bg-success">Sí</span>
+                                            {% else %}
+                                                <span class="badge bg-danger">No</span>
+                                            {% endif %}
+                                        </td>
+                                        <td>
+                                            <!-- Marcar como completa/incompleta -->
+                                            <form method="post" action="{% url 'tasks:task-toggle-complete' task.id %}" style="display:inline;">
+                                                {% csrf_token %}
+                                                <button type="submit" class="btn btn-sm {% if task.is_completed %}btn-warning{% else %}btn-success{% endif %}">
+                                                    {% if task.is_completed %}Marcar como pendiente{% else %}Marcar como completa{% endif %}
+                                                </button>
+                                            </form>
+                                            <!-- Eliminar tarea -->
+                                            <form method="post" action="{% url 'tasks:task-delete' task.id %}" style="display:inline;">
+                                                {% csrf_token %}
+                                                <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('¿Seguro que deseas eliminar esta tarea?');">
+                                                    Eliminar
+                                                </button>
+                                            </form>
+                                        </td>
+                                    </tr>
+                                {% empty %}
+                                    <tr>
+                                        <td colspan="4" class="text-center">No hay tareas registradas.</td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                        <div class="text-center">
+                            <a href="{% url 'home' %}" class="btn btn-primary mt-3">Volver al inicio</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
