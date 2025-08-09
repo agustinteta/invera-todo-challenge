@@ -17,7 +17,7 @@ def task_create(request):
             task = form.save(commit=False)
             task.user = request.user
             task.save()
-            return redirect('task-list')
+            return redirect('tasks:task-list')
     else:
         form = TaskForm()
     return render(request, 'tasks/task_form.html', {'form': form})
@@ -28,11 +28,11 @@ def task_toggle_complete(request, pk):
     if request.method == 'POST':
         task.is_completed = not task.is_completed
         task.save()
-    return redirect('task-list')
+    return redirect('tasks:task-list')
 
 @login_required
 def task_delete(request, pk):
     task = get_object_or_404(Task, pk=pk)
     if request.method == 'POST':
         task.delete()
-    return redirect('task-list')
+    return redirect('tasks:task-list')
