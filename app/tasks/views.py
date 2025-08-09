@@ -45,3 +45,20 @@ def task_delete(request, pk):
         logger.info(f"Usuario {request.user} eliminó la tarea (ID: {task.id}, contenido: '{task.content}').")
         task.delete()
     return redirect('tasks:task-list')
+
+@login_required
+def task_list(request):
+    tasks = Task.objects.all()
+    content = request.GET.get('content')
+    created_at = request.GET.get('created_at')
+
+    if content:
+        tasks = tasks.filter(content__icontains=content)
+    if created_at:
+        tasks = tasks.filter(created_at__date=created_at)
+
+    return render(request, 'tasks/task_list.html', {
+        'tasks': tasks,
+        'content': content or '',
+        'created_at': created_at or '',
+    })
